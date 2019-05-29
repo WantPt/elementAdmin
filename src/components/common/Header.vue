@@ -4,7 +4,7 @@
         <div class="collapse-btn" @click="collapseChage">
             <i class="el-icon-menu"></i>
         </div>
-        <div class="logo">瓶什么后台管理系统</div>
+        <div class="logo">趣乐宝后台关系系统</div>
         <div class="header-right">
             <div class="header-user-con">
                 <!-- 全屏显示 -->
@@ -29,6 +29,9 @@
                     <span class="el-dropdown-link">
                         {{username}} <i class="el-icon-caret-bottom"></i>
                     </span>
+                    <el-dropdown-menu slot="dropdown">
+                        <el-dropdown-item divided  command="eidtPassWord">修改密码</el-dropdown-item>
+                    </el-dropdown-menu>
                     <el-dropdown-menu slot="dropdown">
                         <el-dropdown-item divided  command="loginout">退出登录</el-dropdown-item>
                     </el-dropdown-menu>
@@ -60,6 +63,10 @@
                 if(command == 'loginout'){
                     localStorage.removeItem('ms_username')
                     this.$router.push('/login');
+                }
+                if(command == 'eidtPassWord'){
+                    console.log('点击修改密码')
+                    // this.$router.push('/login');
                 }
             },
             // 侧边栏折叠

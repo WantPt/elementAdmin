@@ -35,7 +35,7 @@
                 v-for="(item,i) in scope.row[item.prop]"
                 :key="i"
                 style="margin-right:10px;"
-                v-if="itemIn.permissionId == item"
+                v-show="itemIn.permissionId == item"
               >{{itemIn.name}}</span>
             </span>
           </div>
