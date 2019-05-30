@@ -16,7 +16,7 @@
         :prop="item.prop"
         :label="item.label"
         :width="item.width ||''"
-        :align="item.align || 'left'"
+        :align="item.align || 'center'"
         :style="item.style || {}"
       >
         <template slot-scope="scope">
@@ -28,6 +28,9 @@
           >
           <div v-if="item.type == 'img' && !scope.row[item.prop]">暂无</div>
           <div v-if="item.type == 'text' || !item.type">{{scope.row[item.prop] || '暂无'}}</div>
+          <div v-if="item.type == 'html'">
+            <div v-html="scope.row[item.prop]"></div>
+          </div>
           <div v-if="item.type == 'time'">{{formatDate(scope.row[item.prop])}}</div>
           <div v-if="item.type == 'arrRole'">
             <span v-for="(itemIn,i) in item.loop" :key="i">
@@ -39,7 +42,7 @@
               >{{itemIn.name}}</span>
             </span>
           </div>
-          <div v-if="item.type == 'btnArr' && btnFlag== true">
+          <div v-if="item.type == 'btnArr'">
             <span v-for="(itemS,i) in scope.row[item.prop]" :key="i">
               <el-popover
                 placement="top"
@@ -62,7 +65,7 @@
                 <el-button
                   :style="itemS.style?itemS.style:{marginLeft: itemS.left || 10+'px'}"
                   :type="itemS.type || 'text'"
-                  :icon="itemS.icon || 'el-icon-edit'"
+                  :icon="itemS.icon"
                   slot="reference"
                   @click="handleShow(scope,itemS.key,i)"
                 >{{itemS.label}}</el-button>
@@ -71,7 +74,7 @@
                 v-if="!itemS.popoverFlag"
                 :style="itemS.style?itemS.style:{marginLeft: itemS.left || 10+'px'}"
                 :type="itemS.type || 'text'"
-                :icon="itemS.icon || 'el-icon-edit'"
+                :icon="itemS.icon"
                 @click="handleEdit(scope,itemS.key,i)"
               >{{itemS.label}}</el-button>
             </span>
@@ -80,10 +83,10 @@
       </el-table-column>
       <el-table-column
         label="操作"
-        :width="btnArr.length<=3?btnArr.length*(80+(height<1000?20:0)):180"
+        :width="btnArr.length<=3?btnArr.length*(120+(height<1000?20:0)):180"
         fixed="right"
         :align="btnArr.length<=3?'center':'left'"
-        v-if="btnArr[0] && !btnFlag"
+        v-if="btnArr[0]"
       >
         <template slot-scope="scope">
           <span v-for="(item,i) in btnArr" :key="i">
@@ -118,21 +121,34 @@
               :style="item.style?item.style:{marginLeft: item.left || 10+'px'}"
               :type="item.type || 'text'"
               :icon="item.icon || 'el-icon-edit'"
+              :size="item.size || 'mini'"
               @click="handleEdit(scope,item.key,i)"
             >{{item.label}}</el-button>
           </span>
         </template>
       </el-table-column>
     </el-table>
-    <div class="pagination" v-if="pagination">
-      <el-pagination
-        background
-        @current-change="handleCurrentChange"
-        layout="prev, pager, next"
-        :total="total"
-        :page-size="pagesize"
-        :current-page="pageIndex"
-      ></el-pagination>
+    <div class="sbFlex">
+      <div>
+        <el-button
+          :type="item.type"
+          :icon="item.icon || ''"
+          :size="item.size || 'medium'"
+          v-for="(item,i) in bottomBtnArr"
+          :key="i"
+          @click="$emit(item.key,null)"
+        >{{item.label}}</el-button>
+      </div>
+      <div class="pagination" v-if="pagination">
+        <el-pagination
+          background
+          @current-change="handleCurrentChange"
+          layout="prev, pager, next"
+          :total="total"
+          :page-size="pagesize"
+          :current-page="pageIndex"
+        ></el-pagination>
+      </div>
     </div>
   </div>
 </template>
@@ -155,7 +171,11 @@
               popoverTxt：popover提示文字
               style：自定义的style
 
-
+写入字段  bottomBtnArr  左下方的按钮
+    字段描述   
+              label：需要展示的名称
+              key：点击的方式
+              icon：当前展示的ICON
 */
 import VueLazyload from "vue-lazyload";
 import { formatDate } from "@/libs/storage";
@@ -218,6 +238,13 @@ export default {
     pageIndex: {
       type: [Number, String],
       default: 1
+    },
+    // 下左侧显示功能性
+    bottomBtnArr: {
+      type: Array,
+      default: () => {
+        return [];
+      }
     }
   },
   data() {
