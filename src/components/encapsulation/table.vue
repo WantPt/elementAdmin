@@ -20,12 +20,20 @@
         :style="item.style || {}"
       >
         <template slot-scope="scope">
-          <img
+          <el-image
             v-if="item.type == 'img' && scope.row[item.prop]"
+            fit="scale-down"
             :src="scope.row[item.prop]"
-            alt
-            style="width: 60px;height: 60px"
+            style="width: 60px;height: 60px;color:#999;"
           >
+            <div slot="error" class="image-slot">
+              <i class="el-icon-picture-outline" style="font-size:60px;"></i>
+            </div>
+            <div slot="placeholder" class="image-slot">
+              加载中
+              <span class="dot">...</span>
+            </div>
+          </el-image>
           <div v-if="item.type == 'img' && !scope.row[item.prop]">暂无</div>
           <div v-if="item.type == 'text' || !item.type">{{scope.row[item.prop] || '暂无'}}</div>
           <div v-if="item.type == 'html'">
